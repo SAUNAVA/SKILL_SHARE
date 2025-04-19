@@ -55,10 +55,26 @@ const userSchema = mongoose.Schema({
         type:String,
         default:""
     },
-    availability:{
-        type:String,
-        default:""
-    },
+    availability: {
+        type: [
+          {
+            day: {
+              type: String,
+              required: false, // Optional
+            },
+            startTime: {
+              type: String,
+              required: false, // Optional
+            },
+            endTime: {
+              type: String,
+              required: false, // Optional
+            },
+            _id: false,
+          },
+        ],
+        default: [], // Ensure a default value is set
+      },
 })
 
 const User = mongoose.model("User" , userSchema);

@@ -14,8 +14,8 @@ const ProfileSetup = () => {
     bio: '',
     skillstoLearn: '',
     skillstoTeach:'',
-    location: '',
-    availability: ''
+    location: ''
+    
   });
 
   useEffect(() => {
@@ -26,8 +26,8 @@ const ProfileSetup = () => {
         bio: user.bio || '',
         skillstoLearn: user.skillstoLearn?.join(', ') || '',
         skillstoTeach: user.skillstoTeach?.join(', ') || '',
-        location: user.location || '',
-        availability: user.availability || '',
+        location: user.location || ''
+        
         
       });
     }
@@ -77,17 +77,7 @@ const ProfileSetup = () => {
           placeholder="Location"
           className="w-full border p-2 rounded"
         />
-        <select
-          name="availability"
-          value={formData.availability}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-        >
-          <option value="">Select Availability</option>
-          <option value="Weekdays">Weekdays</option>
-          <option value="Weekends">Weekends</option>
-          <option value="Flexible">Flexible</option>
-        </select>
+        
         {/* <select
           name="role"
           value={formData.role}

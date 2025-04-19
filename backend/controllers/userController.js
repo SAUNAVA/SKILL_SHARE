@@ -14,52 +14,52 @@ export const getProfile = async(req,res)=>{
 // controllers/userController.js
 
 export const updateProfile = async (req, res) => {
-    try {
-      const user = await User.findById(req.user._id); // from auth middleware
-  
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-  
-      const {
-        name,
-        bio,
-        skillstoLearn,
-        skillstoTeach,
-        location,
-        availability,
-        role,
-      } = req.body;
-  
-      // Update fields
-      user.name = name || user.name;
-      user.bio = bio || user.bio;
-      user.skillstoLearn = skillstoLearn || user.skillstoLearn;
-      user.skillstoTeach = skillstoTeach || user.skillstoTeach;
-      user.location = location || user.location;
-      user.availability = availability || user.availability;
-      user.role = role || user.role;
-  
-      // Check if all required fields are now filled
-      const isComplete =
-        user.name &&
-        user.bio &&
-        user.skillstoLearn?.length > 0 &&
-        user.skillstoTeach?.length >0 &&
-        user.location &&
-        user.availability &&
-        user.role;
-  
-      user.isProfileComplete = !!isComplete;
-  
-      const updatedUser = await user.save();
-  
-      res.status(200).json(updatedUser);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Server error updating profile' });
+  try {
+    const { name, bio, skillstoLearn, skillstoTeach, location, role } = req.body;
+
+    // Build the update object dynamically
+    const updatedData = {
+      ...(name && { name }),
+      ...(bio && { bio }),
+      ...(skillstoLearn && { skillstoLearn }),
+      ...(skillstoTeach && { skillstoTeach }),
+      ...(location && { location }),
+      ...(role && { role }),
+    };
+    
+
+    // Update the user without touching the availability field
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { $set: updatedData },
+      { new: true, runValidators: true } // Enable validation only for provided fields
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
     }
-  };
+
+    // Check if all required fields are now filled
+    const isComplete =
+      updatedUser.name &&
+      updatedUser.bio &&
+      updatedUser.skillstoLearn?.length > 0 &&
+      updatedUser.skillstoTeach?.length > 0 &&
+      updatedUser.location &&
+      updatedUser.role;
+
+    updatedUser.isProfileComplete = !!isComplete;
+
+    // Save the updated user
+    await updatedUser.save();
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: 'Server error updating profile', error: error.message });
+  }
+};
+
   
 
   export const getMentors = async(req,res)=>{
@@ -100,9 +100,10 @@ export const updateProfile = async (req, res) => {
       res.status(201).json(session)
     } catch (error) {
       console.error(error.message)
-      res.status(500).json({message:"Failed to create session"})
+      res.status(500).json({message:"Failed to create session" , error:error.message})
     }
   }
+
 
   export const getMySessions = async(req,res)=>{
     try {
@@ -117,3 +118,45 @@ export const updateProfile = async (req, res) => {
       res.status(500).json({message:"Failed to fetch sessions"})
     }
   }
+
+
+  export const updateAvailability = async(req,res)=>{
+    try {
+      const {availability} = req.body;
+
+      if(!Array.isArray(availability)){
+        return res.status(400).json({message : 'Invalid format for availability'})
+      }
+
+      const updatedUser = await User.findByIdAndUpdate(
+        req.user._id,
+        {availability},
+        {new : true}
+      )
+
+      res.json({message : 'Availability updated successfully', availability: updatedUser.availability})
+    } catch (error) {
+      console.error(error.message)
+      res.status(500).json({message:"Failed to update availability"})
+    }
+  }
+
+  export const getMentorAvailability = async (req, res) => {
+    try {
+      const mentor = await User.findById(req.user._id).select('availability');
+      res.json(mentor.availability);
+    } catch (error) {
+      console.log(error.message)
+      res.status(500).json({ message: 'Could not fetch availability' });
+    }
+  };
+  export const getMentorAvailabilityForLearner = async (req, res) => {
+    try {
+      const {mentorId} = req.params;
+      const mentor = await User.findById(mentorId).select('availability');
+      res.json(mentor.availability);
+    } catch (error) {
+      console.log(error.message)
+      res.status(500).json({ message: error.message });
+    }
+  };

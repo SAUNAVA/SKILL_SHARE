@@ -1,10 +1,9 @@
-import { useEffect } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import { LogOut } from 'lucide-react';
 import { logout } from '../features/auth/authSlice';
-import { Menu, X } from 'lucide-react'; // Import the close (X) icon
+import { Menu, X } from 'lucide-react';
 
 const Sidebar = () => {
   const location = useLocation();
@@ -21,15 +20,11 @@ const Sidebar = () => {
   };
 
   const linkClasses = (path) =>
-    `block py-2 px-4 rounded-md transition ${
-      location.pathname === path
-        ? isCollapsed
-          ? 'bg-red-100' // Highlight for collapsed state
-          : 'bg-blue-200 font-semibold' // Highlight for expanded state
-        : 'hover:bg-blue-100'
+    `block py-2 px-4 rounded-md transition ${location.pathname === path
+      ? 'bg-blue-100 text-blue-600 font-semibold' // Highlight active link
+      : 'hover:bg-gray-100 text-gray-700' // Hover effect for inactive links
     }`;
 
-  // Automatically collapse sidebar on mobile view
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 768) {
@@ -39,13 +34,9 @@ const Sidebar = () => {
       }
     };
 
-    // Set initial state based on screen size
     handleResize();
-
-    // Add event listener for window resize
     window.addEventListener('resize', handleResize);
 
-    // Cleanup event listener on component unmount
     return () => {
       window.removeEventListener('resize', handleResize);
     };
@@ -66,7 +57,7 @@ const Sidebar = () => {
       {/* Sidebar */}
       <div
         className={`${isCollapsed ? 'w-16' : 'w-64'
-          } bg-white shadow-lg min-h-screen p-4 transition-all duration-300 relative`}
+          } bg-teal-50 shadow-md min-h-screen p-4 transition-all duration-300 relative`}
       >
         {/* Close Button (Visible when expanded) */}
         {!isCollapsed && (
@@ -89,13 +80,17 @@ const Sidebar = () => {
           <Link to="/dashboard" className={linkClasses('/dashboard')}>
             <div className="flex items-center gap-2">
               📊
-              {!isCollapsed && <span className="transition-opacity duration-300">Dashboard</span>}
+              {!isCollapsed && (
+                <span className="transition-opacity duration-300">Dashboard</span>
+              )}
             </div>
           </Link>
           <Link to="/profile" className={linkClasses('/profile')}>
             <div className="flex items-center gap-2">
               🙍
-              {!isCollapsed && <span className="transition-opacity duration-300">My Profile</span>}
+              {!isCollapsed && (
+                <span className="transition-opacity duration-300">My Profile</span>
+              )}
             </div>
           </Link>
 
@@ -104,13 +99,17 @@ const Sidebar = () => {
               <Link to="/find-mentor" className={linkClasses('/find-mentor')}>
                 <div className="flex items-center gap-2">
                   🔍
-                  {!isCollapsed && <span className="transition-opacity duration-300">Find Mentor</span>}
+                  {!isCollapsed && (
+                    <span className="transition-opacity duration-300">Find Mentor</span>
+                  )}
                 </div>
               </Link>
               <Link to="/my-sessions" className={linkClasses('/my-sessions')}>
                 <div className="flex items-center gap-2">
                   📅
-                  {!isCollapsed && <span className="transition-opacity duration-300">My Sessions</span>}
+                  {!isCollapsed && (
+                    <span className="transition-opacity duration-300">My Sessions</span>
+                  )}
                 </div>
               </Link>
             </>
@@ -121,13 +120,29 @@ const Sidebar = () => {
               <Link to="/session-requests" className={linkClasses('/requests')}>
                 <div className="flex items-center gap-2">
                   📥
-                  {!isCollapsed && <span className="transition-opacity duration-300">Session Requests</span>}
+                  {!isCollapsed && (
+                    <span className="transition-opacity duration-300">
+                      Session Requests
+                    </span>
+                  )}
+                </div>
+              </Link>
+              <Link to="/set-availability" className={linkClasses('/availability')}>
+                <div className="flex items-center gap-2">
+                  📥
+                  {!isCollapsed && (
+                    <span className="transition-opacity duration-300">
+                      Set Time Slots
+                    </span>
+                  )}
                 </div>
               </Link>
               <Link to="/mentees" className={linkClasses('/mentees')}>
                 <div className="flex items-center gap-2">
                   👨‍🎓
-                  {!isCollapsed && <span className="transition-opacity duration-300">My Mentees</span>}
+                  {!isCollapsed && (
+                    <span className="transition-opacity duration-300">My Mentees</span>
+                  )}
                 </div>
               </Link>
             </>
@@ -141,7 +156,9 @@ const Sidebar = () => {
               }`}
           >
             <LogOut size={20} />
-            {!isCollapsed && <span className="transition-opacity duration-300">Logout</span>}
+            {!isCollapsed && (
+              <span className="transition-opacity duration-300">Logout</span>
+            )}
           </button>
         </div>
       </div>

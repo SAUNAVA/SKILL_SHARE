@@ -15,6 +15,7 @@ import RequestPage from './pages/RequestPage';
 import MySessions from './pages/MySessions';
 import MentorDetails from './pages/MentorDetails';
 import SessionRequests from './pages/MentorPages/SessionRequests';
+import MentorAvailibility from './pages/MentorPages/MentorAvailibility';
 
 function App() {
   
@@ -45,6 +46,7 @@ function App() {
         <Route path='/my-sessions' element={<PrivateRoute><MySessions/></PrivateRoute>}/>
         <Route path='/mentor/:mentorId' element={<MentorDetails/>}/>
         <Route path='/session-requests' element={<PrivateRoute><SessionRequests/></PrivateRoute>}/>
+        <Route path='/set-availability' element={<PrivateRoute><MentorAvailibility/></PrivateRoute>}/>
         
         
       </Routes>
